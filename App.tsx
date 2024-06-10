@@ -1,118 +1,76 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, { useState, useEffect, useRef } from 'react';
+import {StyleSheet, Text, View, Image, ImageBackground, Animated} from 'react-native';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const App = () => {
+  const [isLoading, setLoading] = useState(true);
+  const fadeAnim = useRef(new Animated.Value(0)).current; // Valor inicial para la animación
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  // Efecto para la animación de la imagen
+  // Intento de una animación de fade in y fade out
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+      ]),
+    ).start();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+    setTimeout(() => {
+      setLoading(false);
+    }, 3000);
+  }, []);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    isLoading ? 
+    <View style={styles.loadingContainer}>
+      <Animated.Image
+       style={styles.loadingImage} source={require('./assets/img/logo.png')} />
+      <Text style={styles.loadingText}>Preparando los mejores juegos</Text>
+    </View> 
+    : 
+    <ImageBackground source={require('./assets/img/blueFondo.jpg')} style={{width: '100%', height: '100%'}}>
+      <View style={styles.container}>
+        <Text style={styles.homeText}>Bienvenido</Text>
+      </View>
+    </ImageBackground>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(34, 40, 201, 1)',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  loadingImage: {
+    width: 200,
+    height: 200,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  loadingText: {
+    fontSize: 20,
+    color: 'white',
+    fontWeight: 'bold',
   },
-  highlight: {
-    fontWeight: '700',
+  container:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
+  homeText: {
+    fontSize: 30,
+    color: 'white',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    fontWeight: 'bold',
+  }
 });
 
 export default App;
